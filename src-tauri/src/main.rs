@@ -1,6 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::process::Command;
+use chrono::{DateTime, Local};
+
 
 fn get_installed_apps_windows() -> Vec<String> {
     let output = Command::new("powershell")
@@ -21,7 +23,7 @@ fn get_installed_apps_windows() -> Vec<String> {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet,get_local_time])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -30,4 +32,11 @@ fn main() {
 fn greet(name: &str) -> Vec<String> {
     let app_list = get_installed_apps_windows();
     app_list
+}
+
+#[tauri::command]
+fn get_local_time() -> String {
+    let local: DateTime<Local> = Local::now();
+    println!("hello time {local}");
+    local.to_string() 
 }
