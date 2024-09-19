@@ -2,6 +2,8 @@
 
 use std::process::Command;
 use chrono::{DateTime, Local};
+use std::{thread, time::{Duration, SystemTime}};
+use sysinfo::{ProcessExt, System, SystemExt};
 
 
 fn get_installed_apps_windows() -> Vec<String> {
@@ -21,7 +23,41 @@ fn get_installed_apps_windows() -> Vec<String> {
     apps_list
 }
 
+fn is_within_block_period(block_end: SystemTime) -> bool {
+    SystemTime::now() < block_end
+}
+fn block_app(app_name: &str, block_duration: Duration) {
+    let block_end = SystemTime::now() + block_duration; // Calculate when the block will end
+    println!("Blocking application '{}' until {:?}", app_name, block_end);
+
+    // Start monitoring the app
+    while is_within_block_period(block_end) {
+        let mut system = System::new_all();
+        system.refresh_all();
+
+        // Check if the blocked app is running and kill it
+        for (pid, process) in system.processes() {
+            if process.name().to_lowercase().contains(&app_name.to_lowercase()) {
+                println!("Terminating process: {} (pid: {})", process.name(), pid);
+                process.kill(); // Kill the process
+            }
+        }
+
+        // Sleep for a short duration before checking again
+        thread::sleep(Duration::from_secs(5));
+    }
+
+    println!("Blocking period over for '{}'.", app_name);
+}
+
+
 fn main() {
+
+    let app_name = "notepad"; // The app to block
+    let block_duration = Duration::from_secs(10 * 60); // 10 minutes
+
+    block_app(app_name, block_duration);
+    
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet,get_local_time])
         .run(tauri::generate_context!())
