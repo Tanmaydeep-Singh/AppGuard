@@ -49,18 +49,12 @@ fn block_app(app_name: &str, block_duration: Duration) {
 
 
 fn main() {
-
-    let app_name = "notepad"; // The app to block
-    let block_duration = Duration::from_secs(10 * 60); // 10 minutes
-
-    
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet,get_local_time])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
 
-        block_app(app_name, block_duration);
 
     }
 
@@ -72,6 +66,11 @@ fn greet(name: &str) -> Vec<String> {
 
 #[tauri::command]
 fn get_local_time() -> String {
+    
+    let app_name = "notepad"; // The app to block
+    let block_duration = Duration::from_secs(20); // 10 minutes
+    block_app(app_name, block_duration);
+
     let local: DateTime<Local> = Local::now();
     println!("hello time {local}");
     local.to_string() 

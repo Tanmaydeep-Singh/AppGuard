@@ -1,18 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
+import List from '@/components/List/Index';
 
 export default function Home() {
-  const [apps, setApps] = useState<string[]>([]);
   const [time, setTime] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    invoke<string[]>('greet', { name: 'Next.js' })
-      .then(result => setApps(result))
-      .catch(err => setError(`Failed to load applications: ${err.message}`));
-  }, []);
-
+ 
   const get_time = () => {
     setLoading(true);
     setError(null); // Reset error state
@@ -38,16 +32,8 @@ export default function Home() {
         <h1>{time}</h1>
       </div>
       <div>
-        <h1>Installed Applications</h1>
-        {apps.length > 0 ? (
-          <ul>
-            {apps.map((app, index) => (
-              <li key={index}>{app}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No applications found.</p>
-        )}
+        <List/>
+       
       </div>
     </main>
   );
