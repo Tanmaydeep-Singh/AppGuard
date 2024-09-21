@@ -49,6 +49,8 @@ fn block_app(app_name: &str, block_duration: Duration) {
 
 
 fn main() {
+
+    
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet,get_local_time])
         .run(tauri::generate_context!())

@@ -14,23 +14,30 @@ function List() {
     }, []);
   
     return (
-    
-    <div>
-       
-        <h1>Installed Applications</h1>
-        {apps.length > 0 ? (
-          <ul>
-            {apps.map((app, index) => (
-                 <Items key={index} name={app}/>
-            ))}
-          </ul>
-        ) : (
-          <p>No applications found.</p>
-        )}
-
-        {error}
-    </div>
-  )
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 text-white">
+        <h1 className="text-3xl font-bold mb-6">Installed Applications</h1>
+        <div className="w-full max-w-4xl">
+          <table className="table-auto w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-700 text-white">
+                <th className="py-2 px-4 text-left">Application Name</th>
+                <th className="py-2 px-4 text-right">Enabled</th>
+              </tr>
+            </thead>
+            <tbody>
+              {apps.length > 0 ? (
+                apps.map((app, index) => <Items key={index} name={app} />)
+              ) : (
+                <tr>
+                  <td colSpan={2} className="py-4 text-center">No applications found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
+      </div>
+    );
 }
 
 export default List;
