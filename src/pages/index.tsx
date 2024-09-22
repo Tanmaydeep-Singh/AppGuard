@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 text-[#4A4947]">
       <div>
         <h1>Get Time</h1>
         <button onClick={get_time} disabled={loading}>
