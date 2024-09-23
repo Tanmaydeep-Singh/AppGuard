@@ -1,17 +1,33 @@
 // pages/time/[app].tsx
+import { invoke } from '@tauri-apps/api';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 function AppTimePage() {
   const router = useRouter();
-  const { app } = router.query;
+  const { app } = router.query;  
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
 
   const handleEnable = () => {
     setIsEnabled(true);
-    console.log(`Blocking enabled for ${app} from ${startTime} to ${endTime}`);
+    console.log("Called")
+    console.log(app)
+    console.log(startTime)
+    console.log(endTime)
+    invoke<string>('block_app_for_time_range', {
+      appName: "notepad",                    // Ensure this matches Rust command
+      startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  // Ensure this matches Rust command
+      endTimeStr: new Date(`1970-01-01T${endTime}:00`).toISOString(),      // Ensure this matches Rust command
+    })
+    .then((response) => {
+      console.log(`Blocking enabled for notepad from ${startTime} to ${endTime}`);
+      console.log('Backend response:', response);
+    })
+    .catch((error) => {
+      console.error('Error invoking Tauri command:', error);
+    });
   };
 
   const handleDisable = () => {

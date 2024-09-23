@@ -52,7 +52,7 @@ fn main() {
 
     
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet,get_local_time])
+        .invoke_handler(tauri::generate_handler![greet,get_local_time,block_app_for_time_range])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
@@ -76,4 +76,25 @@ fn get_local_time() -> String {
     let local: DateTime<Local> = Local::now();
     println!("hello time {local}");
     local.to_string() 
+}
+
+#[tauri::command]
+fn block_app_for_time_range(app_name: String, start_time_str: String, end_time_str: String) -> String {
+    println!("HELLO");
+    println!("hello time {app_name}");
+
+    let start_time = DateTime::parse_from_rfc3339(&start_time_str)
+        .expect("Failed to parse start time")
+        .with_timezone(&Local);
+    let end_time = DateTime::parse_from_rfc3339(&end_time_str)
+        .expect("Failed to parse end time")
+        .with_timezone(&Local);
+
+    let block_duration = end_time.signed_duration_since(start_time).to_std().unwrap_or(Duration::from_secs(0));
+    
+    block_app(&app_name, block_duration);
+
+    let local: DateTime<Local> = Local::now();
+    println!("Blocking app '{}' for {} seconds", app_name, block_duration.as_secs());
+    local.to_string()
 }
