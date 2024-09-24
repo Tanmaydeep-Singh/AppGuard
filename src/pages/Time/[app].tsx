@@ -17,9 +17,9 @@ function AppTimePage() {
     console.log(startTime)
     console.log(endTime)
     invoke<string>('block_app_for_time_range', {
-      appName: "notepad",                    // Ensure this matches Rust command
-      startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  // Ensure this matches Rust command
-      endTimeStr: new Date(`1970-01-01T${endTime}:00`).toISOString(),      // Ensure this matches Rust command
+      appName: "valorant",                    
+      startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  
+      endTimeStr: new Date(`1970-01-01T${endTime}:00`).toISOString(),      
     })
     .then((response) => {
       console.log(`Blocking enabled for notepad from ${startTime} to ${endTime}`);

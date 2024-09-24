@@ -9,7 +9,7 @@ use sysinfo::{ProcessExt, System, SystemExt};
 fn get_installed_apps_windows() -> Vec<String> {
     let output = Command::new("powershell")
         .arg("-Command")
-        .arg("Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object -Property DisplayName")
+        .arg("Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object -Property DisplayName")
         .output()
         .expect("Failed to execute PowerShell command");
 
@@ -26,26 +26,31 @@ fn get_installed_apps_windows() -> Vec<String> {
 fn is_within_block_period(block_end: SystemTime) -> bool {
     SystemTime::now() < block_end
 }
+
 fn block_app(app_name: &str, block_duration: Duration) {
-    let block_end = SystemTime::now() + block_duration; 
-    println!("Blocking application '{}' until {:?}", app_name, block_end);
+    let app_name = app_name.to_string(); 
 
+    thread::spawn(move || {
+        let block_end = SystemTime::now() + block_duration;
+        println!("Blocking application '{}' until {:?}", app_name, block_end);
 
-    while is_within_block_period(block_end) {
-        let mut system = System::new_all();
-        system.refresh_all();
+        while is_within_block_period(block_end) {
+            let mut system = System::new_all();
+            system.refresh_all();
 
-        for (pid, process) in system.processes() {
-            if process.name().to_lowercase().contains(&app_name.to_lowercase()) {
-                println!("Terminating process: {} (pid: {})", process.name(), pid);
-                process.kill(); 
+            for (pid, process) in system.processes() {
+                if process.name().to_lowercase().contains(&app_name.to_lowercase()) {
+                    println!("Terminating process: {} (pid: {})", process.name(), pid);
+                    process.kill();
+                }
             }
+            thread::sleep(Duration::from_secs(5));
         }
-        thread::sleep(Duration::from_secs(5));
-    }
 
-    println!("Blocking period over for '{}'.", app_name);
+        println!("Blocking period over for '{}'.", app_name);
+    });
 }
+
 
 
 fn main() {
