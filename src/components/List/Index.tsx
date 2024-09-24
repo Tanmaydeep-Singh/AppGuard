@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import Items from './Items';
 
@@ -12,7 +13,6 @@ const List = () => {
         const { invoke } = await import('@tauri-apps/api');
         const result = await invoke<string[]>('greet', { name: 'Next.js' });
         setApps(result);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(`Failed to load applications: ${err.message}`);
       } finally {
@@ -26,7 +26,7 @@ const List = () => {
   return (
     <div className="min-h-screen w-[80vw] flex flex-col items-center justify-center bg-[#F9FAFB] text-gray-700">
       <h1 className="text-4xl font-bold mb-8 text-gray-800">Installed Applications</h1>
-      <div className="w-full  overflow-x-auto rounded-lg ">
+      <div className="w-full overflow-x-auto rounded-lg">
         <table className="table-auto w-full border-collapse bg-white rounded-lg">
           <thead>
             <tr className="bg-gray-100">

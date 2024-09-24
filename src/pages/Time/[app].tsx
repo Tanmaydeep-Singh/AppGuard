@@ -1,5 +1,4 @@
-// pages/time/[app].tsx
-import { invoke } from '@tauri-apps/api';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -9,30 +8,45 @@ function AppTimePage() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
-
+ 
+  useEffect(() => {
+    const fetchApps = async () => {
+      if (!isEnabled || typeof window === 'undefined') {
+        return; 
+      }
+  
+      try {
+        const { invoke } = await import('@tauri-apps/api');
+  
+        const response = await invoke<string>('block_app_for_time_range', {
+          appName: app,
+          startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  
+          endTimeStr: new Date(`1970-01-01T${endTime}:00`).toISOString(),      
+        });
+  
+        console.log(`Blocking enabled for ${app} from ${startTime} to ${endTime}`);
+        console.log('Backend response:', response);
+      } catch (error) {
+        console.error('Error invoking Tauri command:', error);
+      }
+    };
+  
+    fetchApps(); 
+  }, [isEnabled, app, startTime, endTime]);
+ 
   const handleEnable = () => {
+    if (!startTime || !endTime) {
+      console.error('Start time and end time must be provided.');
+      return;
+    }
+
     setIsEnabled(true);
-    console.log("Called")
-    console.log(app)
-    console.log(startTime)
-    console.log(endTime)
-    invoke<string>('block_app_for_time_range', {
-      appName: "valorant",                    
-      startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  
-      endTimeStr: new Date(`1970-01-01T${endTime}:00`).toISOString(),      
-    })
-    .then((response) => {
-      console.log(`Blocking enabled for notepad from ${startTime} to ${endTime}`);
-      console.log('Backend response:', response);
-    })
-    .catch((error) => {
-      console.error('Error invoking Tauri command:', error);
-    });
+    
+   
   };
 
   const handleDisable = () => {
     setIsEnabled(false);
-    console.log(`Blocking disabled for ${app}`);
   };
 
   return (
