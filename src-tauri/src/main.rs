@@ -4,6 +4,8 @@ use std::process::Command;
 use chrono::{DateTime, Local};
 use std::{thread, time::{Duration, SystemTime}};
 use sysinfo::{ProcessExt, System, SystemExt};
+use tauri::SystemTray;
+use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem,RunEvent};
 
 
 fn get_installed_apps_windows() -> Vec<String> {
@@ -54,13 +56,22 @@ fn block_app(app_name: &str, block_duration: Duration) {
 
 
 fn main() {
+    let tray_menu = SystemTrayMenu::new(); // insert the menu items here
+    let system_tray = SystemTray::new()
+      .with_menu(tray_menu);
 
     
     tauri::Builder::default()
+        .system_tray(system_tray)
         .invoke_handler(tauri::generate_handler![greet,get_local_time,block_app_for_time_range])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app_handle, event| match event {
+            RunEvent::ExitRequested { api, .. } => {
+                api.prevent_exit(); 
+            }
+            _ => {}
+        });
 
 
     }

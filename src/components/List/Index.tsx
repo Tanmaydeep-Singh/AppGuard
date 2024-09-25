@@ -12,7 +12,8 @@ const List = () => {
       try {
         const { invoke } = await import('@tauri-apps/api');
         const result = await invoke<string[]>('greet', { name: 'Next.js' });
-        setApps(result);
+        // Add Notepad to the list of applications
+        setApps([...result, 'Notepad']);
       } catch (err: any) {
         setError(`Failed to load applications: ${err.message}`);
       } finally {
