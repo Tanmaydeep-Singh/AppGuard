@@ -4,6 +4,7 @@ import Items from './Items';
 
 const List = () => {
   const [apps, setApps] = useState<string[]>([]);
+  const [blockedApps, setBlockedApps] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,8 +13,12 @@ const List = () => {
       try {
         const { invoke } = await import('@tauri-apps/api');
         const result = await invoke<string[]>('greet', { name: 'Next.js' });
-        // Add Notepad to the list of applications
-        setApps([...result, 'Notepad']);
+        const blockedAppsResult = await invoke<string[]>('get_all_blocked_apps_command');
+
+        console.log("Blocked apps:", blockedAppsResult);
+
+         setApps([...result, 'Notepad']);
+         setBlockedApps(blockedAppsResult);
       } catch (err: any) {
         setError(`Failed to load applications: ${err.message}`);
       } finally {
@@ -50,7 +55,10 @@ const List = () => {
                 ))}
               </>
             ) : apps.length > 0 ? (
-              apps.map((app, index) => <Items key={index} name={app} />)
+              apps.map((app, index) => {
+                const isBlocked = blockedApps.includes(app); // Check if the app is blocked
+                return <Items key={index} name={app} isBlocked={isBlocked} />; // Pass the blocked status to Items
+              })
             ) : (
               <tr>
                 <td colSpan={2} className="py-6 text-center text-gray-600">No applications found.</td>

@@ -17,7 +17,7 @@ function AppTimePage() {
   
       try {
         const { invoke } = await import('@tauri-apps/api');
-  
+
         const response = await invoke<string>('block_app_for_time_range', {
           appName: app,
           startTimeStr: new Date(`1970-01-01T${startTime}:00`).toISOString(),  
@@ -41,8 +41,6 @@ function AppTimePage() {
     }
 
     setIsEnabled(true);
-    
-   
   };
 
   const handleDisable = () => {
@@ -84,7 +82,8 @@ function AppTimePage() {
           </button>
           <button 
             onClick={handleDisable}
-            className="w-full py-2 px-4 bg-red-500 text-white rounded-md"
+            className={`w-full py-2 px-4 bg-red-500 text-white rounded-md ${!isEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={!isEnabled}
           >
             Disable
           </button>
