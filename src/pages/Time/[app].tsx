@@ -48,41 +48,41 @@ function AppTimePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-5">
-      <div className="max-w-lg mx-auto bg-white p-6 shadow-md rounded-lg">
-        <h1 className="text-2xl font-semibold mb-4">Manage Time Usage for {app}</h1>
+    <div className="min-h-screen bg-gray-900 py-10 px-5">
+      <div className="max-w-lg mx-auto bg-gray-800 p-6 shadow-lg rounded-lg">
+        <h1 className="text-2xl font-semibold text-white mb-4">Manage Time Usage for {app}</h1>
         
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Start Time</label>
+          <label className="block text-sm font-medium text-gray-300">Start Time</label>
           <input 
             type="time" 
             value={startTime} 
             onChange={(e) => setStartTime(e.target.value)} 
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">End Time</label>
+          <label className="block text-sm font-medium text-gray-300">End Time</label>
           <input 
             type="time" 
             value={endTime} 
             onChange={(e) => setEndTime(e.target.value)} 
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full p-2 border border-gray-600 bg-gray-700 text-white rounded-md"
           />
         </div>
 
         <div className="flex space-x-4">
           <button 
             onClick={handleEnable}
-            className={`w-full py-2 px-4 bg-green-500 text-white rounded-md ${isEnabled && 'opacity-50 cursor-not-allowed'}`}
+            className={`w-full py-2 px-4 bg-green-500 text-white rounded-md transition duration-200 hover:bg-green-600 ${isEnabled && 'opacity-50 cursor-not-allowed'}`}
             disabled={isEnabled}
           >
             Enable
           </button>
           <button 
             onClick={handleDisable}
-            className={`w-full py-2 px-4 bg-red-500 text-white rounded-md ${!isEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full py-2 px-4 bg-red-500 text-white rounded-md transition duration-200 hover:bg-red-600 ${!isEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={!isEnabled}
           >
             Disable
@@ -90,11 +90,11 @@ function AppTimePage() {
         </div>
 
         {isEnabled && (
-          <p className="mt-4 text-green-700">App usage restriction is enabled from {startTime} to {endTime}.</p>
+          <p className="mt-4 text-green-200">App usage restriction is enabled from {startTime} to {endTime}.</p>
         )}
 
         {!isEnabled && (
-          <p className="mt-4 text-red-700">App usage restriction is disabled.</p>
+          <p className="mt-4 text-red-200">App usage restriction is disabled.</p>
         )}
       </div>
     </div>
