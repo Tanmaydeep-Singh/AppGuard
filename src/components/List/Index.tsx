@@ -39,7 +39,7 @@ const List = () => {
       <h1 className="text-4xl font-bold mb-8 text-green-500">Installed Applications</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         {loading ? (
-          [...Array(10)].map((_, index) => (
+          [...Array(9)].map((_, index) => (
             <div key={index} className="animate-pulse bg-gray-600 h-24 rounded-lg shadow-lg"></div>
           ))
         ) : apps.length > 0 ? (
